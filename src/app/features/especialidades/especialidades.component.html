@@ -1,1 +1,101 @@
-<p>especialidades works!</p>
+<div class="container-fluid p-0 animate__animated animate__fadeIn">
+
+  <div class="mb-4">
+    <h3 class="fw-bold text-dark mb-1">Especialidades Clínicas</h3>
+    <p class="text-muted small mb-0">Gerencie as categorias de atendimento oferecidas pela VestaPlan.</p>
+  </div>
+
+  <div class="row g-4">
+    
+    <div class="col-12 col-lg-4">
+      <div class="card border-0 shadow-sm p-4 bg-white" style="border-radius: 16px;">
+        <h5 class="fw-bold text-dark mb-3">
+          <i class="bi bi-plus-circle-fill text-primary me-2" style="color: #5A1867 !important;"></i>Nova Especialidade
+        </h5>
+        
+        <form>
+          <div class="mb-4">
+            <label class="form-label small fw-semibold text-muted">Nome da Especialidade</label>
+            <input type="text" class="form-control bg-light border-0 py-2 small" placeholder="Ex: Ortodontia" style="border-radius: 8px;">
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary fw-bold w-100 py-2 border-0" style="background-color: #5A1867; border-radius: 8px;">
+              Salvar
+            </button>
+            <button type="button" class="btn btn-light fw-semibold w-100 py-2 border-0" style="background-color: #ededed; border-radius: 8px; color: #6c757d;">
+              Limpar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-8">
+      <div class="card border-0 shadow-sm p-4 bg-white" style="border-radius: 16px;">
+        
+        <div class="input-group mb-3" style="max-width: 350px;">
+          <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-search small"></i></span>
+          <input type="text" class="form-control bg-light border-0 small" placeholder="Filtrar por nome..." style="font-size: 0.85rem;">
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light text-muted small">
+              <tr>
+                <th class="border-0 py-3" style="width: 120px;">ID</th>
+                <th class="border-0 py-3">Especialidade</th>
+                <th class="border-0 py-3 text-center" style="width: 120px;">Ações</th>
+              </tr>
+            </thead>
+            <tbody class="small">
+              
+              <tr>
+                <td class="text-muted fw-mono">#1</td>
+                <td class="fw-bold text-dark">
+                  <i class="bi bi-tag-fill text-success me-2" style="color: #76EAD7 !important;"></i>Ortodontia
+                </td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-2">
+                    <button class="btn btn-sm btn-light text-primary border-0" title="Editar" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-light text-danger border-0" title="Excluir" style="background-color: #FCE8E6;"><i class="bi bi-trash3-fill"></i></button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="text-muted fw-mono">#2</td>
+                <td class="fw-bold text-dark">
+                  <i class="bi bi-tag-fill text-success me-2" style="color: #76EAD7 !important;"></i>Endodontia
+                </td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-2">
+                    <button class="btn btn-sm btn-light text-primary border-0" title="Editar" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-light text-danger border-0" title="Excluir" style="background-color: #FCE8E6;"><i class="bi bi-trash3-fill"></i></button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="text-muted fw-mono">#3</td>
+                <td class="fw-bold text-dark">
+                  <i class="bi bi-tag-fill text-success me-2" style="color: #76EAD7 !important;"></i>Odontopediatria
+                </td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-2">
+                    <button class="btn btn-sm btn-light text-primary border-0" title="Editar" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-light text-danger border-0" title="Excluir" style="background-color: #FCE8E6;"><i class="bi bi-trash3-fill"></i></button>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
