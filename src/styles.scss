@@ -1,7 +1,17 @@
+$vesta-purple: #5A1867;
+$vesta-mint:   #76EAD7; 
+$vesta-bg:     #F9F8FC;
+
+$primary: $vesta-purple;
+$success: $vesta-mint;
+$body-bg: $vesta-bg;
+
 @import "bootstrap/scss/bootstrap";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
 body {
-    background-color: #f8f9fa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+.bg-vesta-purple { background-color: $vesta-purple !important; }
+.text-vesta-mint { color: $vesta-mint !important; }
