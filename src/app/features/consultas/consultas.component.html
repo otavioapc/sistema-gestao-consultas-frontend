@@ -5,7 +5,7 @@
       <h3 class="fw-bold text-dark mb-1">Gerenciamento de Consultas</h3>
       <p class="text-muted small mb-0">Controle completo de agendamentos, edições e cancelamentos da clínica.</p>
     </div>
-    <button class="btn btn-primary fw-bold px-4 py-2 border-0 shadow-sm" style="background-color: #5A1867; border-radius: 10px;">
+    <button (click)="abrirNovoAgendamento()" class="btn btn-primary fw-bold px-4 py-2 border-0 shadow-sm" style="background-color: #5A1867; border-radius: 10px;">
       <i class="bi bi-calendar-plus me-2"></i> Nova Consulta
     </button>
   </div>
@@ -36,82 +36,149 @@
           <tr>
             <th class="border-0 py-3">Data / Hora</th>
             <th class="border-0 py-3">Paciente</th>
-            <th class="border-0 py-3">Profissional / Especialidade</th>
+            <th class="border-0 py-3">Profissional / Descrição do Procedimento</th>
             <th class="border-0 py-3">Status</th>
-            <th class="border-0 py-3 text-center" style="width: 120px;">Ações</th>
+            <th class="border-0 py-3 text-center" style="width: 150px;">Ações</th>
           </tr>
         </thead>
         <tbody class="small">
-          <tr>
-            <td>
-              <div class="fw-bold text-dark">16/06/2026</div>
-              <span class="text-primary fw-semibold">09:00 AM</span>
-            </td>
-            <td>
-              <div class="fw-semibold">Marcela Tadeu Vieira</div>
-              <span class="text-muted" style="font-size: 0.75rem;">CPF: 123.***.***-00</span>
-            </td>
-            <td>
-              <div class="fw-semibold">Dr. Carlos Pedroso</div>
-              <span class="text-muted" style="font-size: 0.75rem;">Ortodontia</span>
-            </td>
-            <td>
-              <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Confirmado</span>
-            </td>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-light text-primary border-0" title="Editar Consulta" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-light text-danger border-0" title="Cancelar Consulta" style="background-color: #FCE8E6;"><i class="bi bi-calendar-x-fill"></i></button>
-              </div>
-            </td>
-          </tr>
+          
+          @for (c of listaConsultas; track c.id) {
+            <tr [ngClass]="{'table-light opacity-50': c.status === 'Cancelado'}">
+              <td>
+                <div class="fw-bold" [ngClass]="c.status === 'Cancelado' ? 'text-muted text-decoration-line-through' : 'text-dark'">
+                  {{ formatarData(c.dataInicio) }}
+                </div>
+                <span [ngClass]="c.status === 'Cancelado' ? 'text-muted text-decoration-line-through' : 'text-primary fw-semibold'">
+                  {{ extrairHora(c.dataInicio) }} - {{ extrairHora(c.dataFim) }}
+                </span>
+              </td>
+              <td>
+                <div class="fw-semibold" [ngClass]="{'text-muted text-decoration-line-through': c.status === 'Cancelado'}">{{ c.pacienteNome }}</div>
+                <span class="text-muted" style="font-size: 0.75rem;">CPF: {{ c.cpf }}</span>
+              </td>
+              <td>
+                <div class="fw-semibold" [ngClass]="{'text-muted text-decoration-line-through': c.status === 'Cancelado'}">{{ c.dentistaNome }}</div>
+                <span class="text-muted" style="font-size: 0.75rem;">{{ c.descricao }}</span>
+              </td>
+              <td>
+                <span class="badge rounded-pill px-2 py-1" 
+                      [ngClass]="{
+                        'bg-success-subtle text-success': c.status === 'Confirmado',
+                        'bg-warning-subtle text-warning': c.status === 'Pendente',
+                        'bg-danger-subtle text-danger': c.status === 'Cancelado'
+                      }">
+                  {{ c.status }}
+                </span>
+              </td>
+              <td class="text-center">
+                @if (c.status !== 'Cancelado') {
+                  <div class="d-flex justify-content-center gap-2">
+                    <button (click)="abrirEdicao(c)" class="btn btn-sm btn-light text-primary border-0" title="Editar" style="background-color: #F1E7F5;">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button (click)="abrirCancelamento(c)" class="btn btn-sm btn-light text-danger border-0" title="Cancelar" style="background-color: #FCE8E6;">
+                      <i class="bi bi-calendar-x-fill"></i>
+                    </button>
+                  </div>
+                } @else {
+                  <span class="text-muted small" style="font-style: italic;">Motivo: {{ c.motivoCancelamento }}</span>
+                }
+              </td>
+            </tr>
+          }
 
-          <tr>
-            <td>
-              <div class="fw-bold text-dark">17/06/2026</div>
-              <span class="text-primary fw-semibold">14:30 PM</span>
-            </td>
-            <td>
-              <div class="fw-semibold">Carlos Henrique Dias</div>
-              <span class="text-muted" style="font-size: 0.75rem;">CPF: 456.***.***-11</span>
-            </td>
-            <td>
-              <div class="fw-semibold">Dra. Ana Silva</div>
-              <span class="text-muted" style="font-size: 0.75rem;">Clínica Geral</span>
-            </td>
-            <td>
-              <span class="badge bg-warning-subtle text-warning rounded-pill px-2 py-1">Pendente</span>
-            </td>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-light text-primary border-0" title="Editar Consulta" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-light text-danger border-0" title="Cancelar Consulta" style="background-color: #FCE8E6;"><i class="bi bi-calendar-x-fill"></i></button>
-              </div>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <div class="fw-bold text-muted text-decoration-line-through">15/06/2026</div>
-              <span class="text-muted small text-decoration-line-through">11:00 AM</span>
-            </td>
-            <td>
-              <div class="fw-semibold text-muted text-decoration-line-through">Amanda Souza</div>
-              <span class="text-muted" style="font-size: 0.75rem;">CPF: 789.***.***-22</span>
-            </td>
-            <td>
-              <div class="fw-semibold text-muted text-decoration-line-through">Dr. Carlos Pedroso</div>
-              <span class="text-muted" style="font-size: 0.75rem;">Odontopediatria</span>
-            </td>
-            <td>
-              <span class="badge bg-danger-subtle text-danger rounded-pill px-2 py-1">Cancelado</span>
-            </td>
-            <td class="text-center">
-              <span class="text-muted small italic">Motivo: Imprevisto</span>
-            </td>
-          </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="exibirModalAgendamento">
+    <div class="custom-modal-content modal-md p-4">
+      
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">
+          {{ modoEdicao ? 'Alterar Dados do Agendamento' : 'Agendar Nova Consulta' }}
+        </h5>
+        <button type="button" class="btn-close small" (click)="fecharModais()"></button>
+      </div>
+      
+      <form [formGroup]="agendamentoForm" (ngSubmit)="onSalvarAgendamento()">
+        
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted">Paciente</label>
+          <select formControlName="idPaciente" class="form-select bg-light border-0 small text-muted py-2">
+            <option value="">Selecione o paciente...</option>
+            @for (p of pacientesMock; track p.id) {
+              <option [value]="p.id">{{ p.nome }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted">Dentista Responsável</label>
+          <select formControlName="idDentista" class="form-select bg-light border-0 small text-muted py-2">
+            <option value="">Selecione o profissional...</option>
+            @for (d of dentistasMock; track d.id) {
+              <option [value]="d.id">{{ d.nome }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted">Descrição do Procedimento</label>
+          <input type="text" formControlName="descricao" class="form-control bg-light border-0 py-2 small" placeholder="Ex: Ajuste de bráquetes, profilaxia..." style="border-radius: 8px;">
+        </div>
+
+        <div class="row g-2 mb-4">
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted">Data/Hora Inicial</label>
+            <input type="datetime-local" formControlName="dataInicio" class="form-control bg-light border-0 py-2 small">
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted">Data/Hora Final</label>
+            <input type="datetime-local" formControlName="dataFim" class="form-control bg-light border-0 py-2 small">
+          </div>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-light small fw-semibold flex-grow-1" (click)="fecharModais()" style="background-color: #ededed; border-radius: 8px; color: #6c757d;">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="agendamentoForm.invalid" class="btn fw-bold flex-grow-1 text-white" 
+                  [style.background-color]="modoEdicao ? '#ffc107' : '#5A1867'" style="border-radius: 8px;">
+            {{ modoEdicao ? 'Atualizar' : 'Salvar Consulta' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="exibirModalCancelamento">
+    <div class="custom-modal-content modal-sm p-4">
+      
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+        <h5 class="fw-bold text-dark mb-0">Justificar Cancelamento</h5>
+      </div>
+      
+      <form [formGroup]="cancelamentoForm" (ngSubmit)="onConfirmarCancelamento()">
+        <div class="mb-4">
+          <label class="form-label small fw-semibold text-muted">Informe o motivo do cancelamento</label>
+          <textarea formControlName="motivo" class="form-control bg-light border-0 small" rows="3" placeholder="Ex: Paciente solicitou cancelamento por motivos de saúde..." style="border-radius: 8px; resize: none;"></textarea>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-light small fw-semibold flex-grow-1" (click)="fecharModais()" style="background-color: #ededed; border-radius: 8px; color: #6c757d;">
+            Voltar
+          </button>
+          <button type="submit" [disabled]="cancelamentoForm.invalid" class="btn btn-danger small fw-bold flex-grow-1 text-white" style="border-radius: 8px;">
+            Confirmar Cancelamento
+          </button>
+        </div>
+      </form>
+
     </div>
   </div>
 
