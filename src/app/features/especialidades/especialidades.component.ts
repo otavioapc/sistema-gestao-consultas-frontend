@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { EspecialidadeService, Especialidade } from '../../core/services/especialidade.service'; 
 
 @Component({
   selector: 'app-especialidades',
@@ -9,21 +10,20 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
   templateUrl: './especialidades.component.html',
   styleUrl: './especialidades.component.scss'
 })
-export class EspecialidadesComponent {
+export class EspecialidadesComponent implements OnInit {
   
   cadastroForm: FormGroup;
   edicaoForm: FormGroup;
   idEspecialidadeSel: number | null = null;
-  exibirModal: boolean = false; 
+  exibirModal: boolean = false;
+  
+  // Lista que agora será preenchida pelos dados vindos do Java
+  listaEspecialidades: Especialidade[] = [];
 
-  listaEspecialidades = [
-    { id: 1, nome: 'Ortodontia' },
-    { id: 2, nome: 'Endodontia' },
-    { id: 3, nome: 'Odontopediatria' }
-  ];
-
-  constructor(private readonly fb: FormBuilder) {
-
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly especialidadeService: EspecialidadeService // Injeção do serviço HTTP
+  ) {
     this.cadastroForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]]
     });
@@ -33,20 +33,39 @@ export class EspecialidadesComponent {
     });
   }
 
+  ngOnInit(): void {
+    this.carregarEspecialidades(); // Carrega os dados assim que a tela abre
+  }
+
+  // Consome o GET /especialidades da sua API
+  carregarEspecialidades(): void {
+    this.especialidadeService.listar().subscribe({
+      next: (dados) => this.listaEspecialidades = dados,
+      error: (err) => console.error('Erro ao carregar especialidades do banco:', err)
+    });
+  }
+
+  // Consome o POST /especialidades
   onCadastrar(): void {
     if (this.cadastroForm.valid) {
-      const novoId = this.listaEspecialidades.length + 1;
-      this.listaEspecialidades.push({ id: novoId, nome: this.cadastroForm.value.nome });
-      this.cadastroForm.reset();
+      const payload = { nome: this.cadastroForm.value.nome };
+      
+      this.especialidadeService.cadastrar(payload).subscribe({
+        next: () => {
+          this.cadastroForm.reset();
+          this.carregarEspecialidades(); // Recarrega a tabela com o dado novo do banco
+        },
+        error: (err) => console.error('Erro ao cadastrar:', err)
+      });
     }
   }
 
-  abrirModalEdicao(especialidade: any): void {
-    this.idEspecialidadeSel = especialidade.id;
-    this.edicaoForm.patchValue({
-      nome: especialidade.nome
-    });
-    this.exibirModal = true;
+  prepararEdicao(especialidade: Especialidade): void {
+    if (especialidade.id !== undefined) {
+      this.idEspecialidadeSel = especialidade.id;
+      this.edicaoForm.patchValue({ nome: especialidade.nome });
+      this.exibirModal = true;
+    }
   }
 
   fecharModal(): void {
@@ -55,13 +74,28 @@ export class EspecialidadesComponent {
     this.edicaoForm.reset();
   }
 
+  // Consome o PUT /especialidades/{id}
   onAtualizar(): void {
     if (this.edicaoForm.valid && this.idEspecialidadeSel !== null) {
-      const index = this.listaEspecialidades.findIndex(e => e.id === this.idEspecialidadeSel);
-      if (index !== -1) {
-        this.listaEspecialidades[index].nome = this.edicaoForm.value.nome;
-      }
-      this.fecharModal();
+      const payload = { nome: this.edicaoForm.value.nome };
+
+      this.especialidadeService.atualizar(this.idEspecialidadeSel, payload).subscribe({
+        next: () => {
+          this.fecharModal();
+          this.carregarEspecialidades(); // Recarrega com os dados atualizados
+        },
+        error: (err) => console.error('Erro ao atualizar:', err)
+      });
+    }
+  }
+
+  // Consome o DELETE /especialidades/{id}
+  onDeletar(id: number | undefined): void {
+    if (id !== undefined && confirm('Deseja realmente excluir esta especialidade?')) {
+      this.especialidadeService.deletar(id).subscribe({
+        next: () => this.carregarEspecialidades(),
+        error: (err) => console.error('Erro ao deletar:', err)
+      });
     }
   }
 }
