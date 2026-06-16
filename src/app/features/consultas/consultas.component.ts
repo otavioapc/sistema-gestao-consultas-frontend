@@ -18,12 +18,10 @@ export class ConsultasComponent {
   exibirModalCancelamento: boolean = false;
   modoEdicao: boolean = false;
   idConsultaSel: number | null = null;
-
-  // Listas de apoio para alimentar os seletores (Selects) do formulário
+  
   pacientesMock = [{ id: 124, nome: 'Marcela Tadeu Vieira' }, { id: 125, nome: 'Carlos Henrique Dias' }, { id: 126, nome: 'Amanda Souza' }];
   dentistasMock = [{ id: 1, nome: 'Dr. Carlos Pedroso' }, { id: 2, nome: 'Dra. Ana Silva' }];
 
-  // Lista de Consultas simulando o retorno do seu @Get Mappings
   listaConsultas = [
     { id: 10, dataInicio: '2026-06-16T09:00:00', dataFim: '2026-06-16T10:00:00', idPaciente: 124, pacienteNome: 'Marcela Tadeu Vieira', cpf: '123.***.***-00', idDentista: 1, dentistaNome: 'Dr. Carlos Pedroso', idUsuario: 1, descricao: 'Manutenção de Aparelho Ortodôntico', status: 'Confirmado', motivoCancelamento: '' },
     { id: 11, dataInicio: '2026-06-17T14:30:00', dataFim: '2026-06-17T15:30:00', idPaciente: 125, pacienteNome: 'Carlos Henrique Dias', cpf: '456.***.***-11', idDentista: 2, dentistaNome: 'Dra. Ana Silva', idUsuario: 1, descricao: 'Clínica Geral - Limpeza', status: 'Pendente', motivoCancelamento: '' },
@@ -31,11 +29,10 @@ export class ConsultasComponent {
   ];
 
   constructor(private readonly fb: FormBuilder) {
-    // Espelho exato do seu ConsultaDTO / ConsultaUpdateDTO
     this.agendamentoForm = this.fb.group({
       idPaciente: ['', [Validators.required]],
       idDentista: ['', [Validators.required]],
-      idUsuario: [1, [Validators.required]], // Simula o ID do admin logado
+      idUsuario: [1, [Validators.required]],
       descricao: ['', [Validators.required, Validators.minLength(5)]],
       dataInicio: ['', [Validators.required]],
       dataFim: ['', [Validators.required]]
@@ -48,7 +45,7 @@ export class ConsultasComponent {
 
   abrirNovoAgendamento(): void {
     this.modoEdicao = false;
-    this.agendamentoForm.reset({ idUsuario: 1 }); // Mantém o usuário logado padrão
+    this.agendamentoForm.reset({ idUsuario: 1 });
     this.exibirModalAgendamento = true;
   }
 
@@ -101,7 +98,6 @@ export class ConsultasComponent {
           };
         }
       } else {
-        // Simulação perfeita do Payload enviado no POST
         this.listaConsultas.push({
           id: Math.floor(Math.random() * 90) + 20,
           dataInicio: valores.dataInicio,
@@ -134,15 +130,13 @@ export class ConsultasComponent {
     }
   }
 
-  // Extrai e formata o horário inicial a partir do LocalDateTime iso string
   extrairHora(localDateTimeStr: string): string {
     if (!localDateTimeStr) return '';
     const partes = localDateTimeStr.split('T');
     if (partes.length < 2) return localDateTimeStr;
-    return partes[1].substring(0, 5); // Retorna "HH:mm"
+    return partes[1].substring(0, 5);
   }
 
-  // Formata o LocalDateTime para exibição na tabela como "dd/MM/yyyy"
   formatarData(localDateTimeStr: string): string {
     if (!localDateTimeStr) return '';
     const dataApenas = localDateTimeStr.split('T')[0];

@@ -5,25 +5,18 @@
       <h3 class="fw-bold text-dark mb-1">Controle de Usuários</h3>
       <p class="text-muted small mb-0">Gerencie as credenciais de acesso e permissões dos colaboradores no VestaPlan.</p>
     </div>
-    <button class="btn btn-primary fw-bold px-4 py-2 border-0 shadow-sm" style="background-color: #5A1867; border-radius: 10px;">
+    <button (click)="abrirModalNovo()" class="btn btn-primary fw-bold px-4 py-2 border-0 shadow-sm" style="background-color: #5A1867; border-radius: 10px;">
       <i class="bi bi-shield-plus me-2"></i> Novo Usuário
     </button>
   </div>
 
   <div class="card border-0 shadow-sm p-3 mb-4 bg-white" style="border-radius: 12px;">
     <div class="row g-2 align-items-center">
-      <div class="col-12 col-md-9">
+      <div class="col-12 col-md-12">
         <div class="input-group">
           <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-search small"></i></span>
           <input type="text" class="form-control bg-light border-0 small" placeholder="Buscar usuário por nome ou e-mail corporativo..." style="font-size: 0.9rem;">
         </div>
-      </div>
-      <div class="col-12 col-md-3">
-        <select class="form-select bg-light border-0 small text-muted" style="font-size: 0.9rem;">
-          <option value="">Todos os Perfis</option>
-          <option value="ADMIN">Administrador</option>
-          <option value="USER">Profissional</option>
-        </select>
       </div>
     </div>
   </div>
@@ -42,92 +35,126 @@
         </thead>
         <tbody class="small">
           
-          <tr>
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold me-3 text-white" 
-                     style="width: 38px; height: 38px; background-color: #5A1867;">
-                  OA
+          @for (u of listaUsuarios; track u.id) {
+            <tr [ngClass]="{'table-light opacity-50': !u.ativo}">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold me-3 text-white" 
+                       [style.background-color]="u.ativo ? '#5A1867' : '#6c757d'"
+                       style="width: 38px; height: 38px;">
+                    {{ getIniciais(u.nome) }}
+                  </div>
+                  <div>
+                    <div class="fw-bold" [ngClass]="u.ativo ? 'text-dark' : 'text-secondary text-decoration-line-through'">{{ u.nome }}</div>
+                    <span class="text-muted" style="font-size: 0.75rem;">ID: #00{{ u.id }}</span>
+                  </div>
                 </div>
-                <div>
-                  <div class="fw-bold text-dark">Otávio Augusto</div>
-                  <span class="text-muted" style="font-size: 0.75rem;">ID: #001</span>
+              </td>
+              <td [ngClass]="{'text-muted': !u.ativo}">{{ u.email }}</td>
+              <td>
+                <span class="badge rounded-pill px-2 py-1 fw-semibold"
+                      [ngClass]="{
+                        'bg-danger-subtle text-danger': u.perfil === 'ADMINISTRADOR',
+                        'bg-primary-subtle text-primary': u.perfil === 'RECEPCIONISTA',
+                        'bg-success-subtle text-success': u.perfil === 'PROFISSIONAL'
+                      }"
+                      [style.background-color]="u.perfil === 'RECEPCIONISTA' && u.ativo ? '#F1E7F5 !important' : ''"
+                      [style.color]="u.perfil === 'RECEPCIONISTA' && u.ativo ? '#5A1867 !important' : ''">
+                  {{ u.perfil }}
+                </span>
+              </td>
+              <td>
+                <span class="badge rounded-pill px-2 py-1" 
+                      [ngClass]="u.ativo ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                  {{ u.ativo ? 'Ativo' : 'Bloqueado' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-2">
+                  <button (click)="abrirModalEditar(u)" 
+                          class="btn btn-sm btn-light text-primary border-0" 
+                          [disabled]="!u.ativo"
+                          title="Editar Usuário" style="background-color: #F1E7F5;">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  
+                  <button (click)="alternarBloqueio(u)" 
+                          class="btn btn-sm border-0" 
+                          [title]="u.ativo ? 'Bloquear Acesso' : 'Desbloquear Acesso'"
+                          [ngClass]="u.ativo ? 'btn-light text-danger' : 'btn-light text-success'"
+                          [style.background-color]="u.ativo ? '#FCE8E6' : '#E8FBF8'">
+                    <i class="bi" [ngClass]="u.ativo ? 'bi-lock-fill' : 'bi-unlock-fill'"></i>
+                  </button>
                 </div>
-              </div>
-            </td>
-            <td>otavio.augusto&#64;vestaplan.com</td>
-            <td>
-              <span class="badge bg-danger-subtle text-danger rounded-pill px-2 py-1 fw-semibold">ADMINISTRADOR</span>
-            </td>
-            <td>
-              <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Ativo</span>
-            </td>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-light text-primary border-0" title="Editar Usuário" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-light text-danger border-0" title="Bloquear Acesso" style="background-color: #FCE8E6;"><i class="bi bi-lock-fill"></i></button>
-              </div>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold me-3 text-white" 
-                     style="width: 38px; height: 38px; background-color: #5A1867;">
-                  MT
-                </div>
-                <div>
-                  <div class="fw-bold text-dark">Marcela Tadeu</div>
-                  <span class="text-muted" style="font-size: 0.75rem;">ID: #002</span>
-                </div>
-              </div>
-            </td>
-            <td>marcela.tadeu&#64;vestaplan.com</td>
-            <td>
-              <span class="badge bg-primary-subtle text-primary rounded-pill px-2 py-1 fw-semibold" style="background-color: #F1E7F5 !important; color: #5A1867 !important;">RECEPCIONISTA</span>
-            </td>
-            <td>
-              <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Ativo</span>
-            </td>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-light text-primary border-0" title="Editar Usuário" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-light text-danger border-0" title="Bloquear Acesso" style="background-color: #FCE8E6;"><i class="bi bi-lock-fill"></i></button>
-              </div>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold me-3 text-white" 
-                     style="width: 38px; height: 38px; background-color: #5A1867;">
-                  CP
-                </div>
-                <div>
-                  <div class="fw-bold text-dark">Carlos Pedroso</div>
-                  <span class="text-muted" style="font-size: 0.75rem;">ID: #003</span>
-                </div>
-              </div>
-            </td>
-            <td>carlos.pedroso&#64;vestaplan.com</td>
-            <td>
-              <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1 fw-semibold">PROFISSIONAL</span>
-            </td>
-            <td>
-              <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Ativo</span>
-            </td>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-light text-primary border-0" title="Editar Usuário" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-light text-danger border-0" title="Bloquear Acesso" style="background-color: #FCE8E6;"><i class="bi bi-lock-fill"></i></button>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
+          }
 
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="exibirModal">
+    <div class="custom-modal-content p-4">
+      
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">
+          {{ modoEdicao ? 'Alterar Permissões de Usuário' : 'Cadastrar Novo Usuário' }}
+        </h5>
+        <button type="button" class="btn-close small" (click)="fecharModal()"></button>
+      </div>
+      
+      <form [formGroup]="usuarioForm" (ngSubmit)="onSalvar()">
+        
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted">Nome do Colaborador</label>
+          <input type="text" formControlName="nome" class="form-control bg-light border-0 py-2 small" placeholder="Nome Completo">
+          <div *ngIf="usuarioForm.get('nome')?.touched && usuarioForm.get('nome')?.invalid" class="text-danger small mt-1" style="font-size: 0.7rem;">
+            O nome deve ter no mínimo 6 caracteres.
+          </div>
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted">CPF</label>
+            <input type="text" formControlName="cpf" class="form-control bg-light border-0 py-2 small" placeholder="000.000.000-00">
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted">E-mail de Login</label>
+            <input type="email" formControlName="email" class="form-control bg-light border-0 py-2 small" placeholder="nome&#64;vestaplan.com">
+          </div>
+        </div>
+
+        <div class="mb-3" *ngIf="!modoEdicao">
+          <label class="form-label small fw-semibold text-muted">Senha de Acesso</label>
+          <input type="password" formControlName="senha" class="form-control bg-light border-0 py-2 small" placeholder="Mínimo 6 caracteres">
+          <div *ngIf="usuarioForm.get('senha')?.touched && usuarioForm.get('senha')?.invalid" class="text-danger small mt-1" style="font-size: 0.7rem;">
+            A senha obrigatória precisa de no mínimo 6 caracteres.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label small fw-semibold text-muted">Perfil / Nível de Acesso</label>
+          <select formControlName="perfil" class="form-select bg-light border-0 small text-muted py-2">
+            <option value="">Selecione o nível de permissão...</option>
+            <option value="ADMINISTRADOR">ADMINISTRADOR (Acesso Total)</option>
+            <option value="RECEPCIONISTA">RECEPCIONISTA (Agendamentos e Pacientes)</option>
+            <option value="PROFISSIONAL">PROFISSIONAL (Dentista / Prontuários)</option>
+          </select>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-light small fw-semibold flex-grow-1" (click)="fecharModal()" style="background-color: #ededed; border-radius: 8px; color: #6c757d;">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="usuarioForm.invalid" class="btn fw-bold flex-grow-1 text-white" 
+                  [style.background-color]="modoEdicao ? '#ffc107' : '#5A1867'" style="border-radius: 8px;">
+            {{ modoEdicao ? 'Atualizar' : 'Liberar Acesso' }}
+          </button>
+        </div>
+      </form>
+
     </div>
   </div>
 
