@@ -5,7 +5,7 @@
       <h3 class="fw-bold text-dark mb-1">Corpo Clínico (Dentistas)</h3>
       <p class="text-muted small mb-0">Gerencie os profissionais de saúde, suas especialidades e status de atuação.</p>
     </div>
-    <button class="btn btn-primary fw-bold px-4 py-2 border-0 shadow-sm" style="background-color: #5A1867; border-radius: 10px;">
+    <button (click)="abrirModalNovo()" class="btn btn-primary fw-bold px-4 py-2 border-0 shadow-sm" style="background-color: #5A1867; border-radius: 10px;">
       <i class="bi bi-heart-pulse-fill me-2"></i> Cadastrar Dentista
     </button>
   </div>
@@ -42,95 +42,108 @@
         </thead>
         <tbody class="small">
           
-          <tr>
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold me-3 text-white" 
-                     style="width: 38px; height: 38px; background-color: #5A1867;">
-                  CP
+          @for (d of listaDentistas; track d.id) {
+            <tr [ngClass]="{'table-light opacity-50': !d.ativo}">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold me-3 text-white" 
+                       [style.background-color]="d.ativo ? '#5A1867' : '#6c757d'"
+                       style="width: 38px; height: 38px;">
+                    {{ getIniciais(d.nome) }}
+                  </div>
+                  <div>
+                    <div class="fw-bold" [ngClass]="d.ativo ? 'text-dark' : 'text-secondary text-decoration-line-through'">{{ d.nome }}</div>
+                    <span class="text-muted" style="font-size: 0.75rem;">{{ d.especialidade }}</span>
+                  </div>
                 </div>
-                <div>
-                  <div class="fw-bold text-dark">Dr. Carlos Pedroso</div>
-                  <span class="text-muted" style="font-size: 0.75rem;">Ortodontia / Implantodontia</span>
+              </td>
+              <td [ngClass]="{'text-muted': !d.ativo}">{{ d.cro }}</td>
+              <td [ngClass]="{'text-muted': !d.ativo}">
+                <div class="fw-semibold">{{ d.telefone }}</div>
+                <span class="text-muted" style="font-size: 0.75rem;">{{ d.email }}</span>
+              </td>
+              <td>
+                <span class="badge rounded-pill px-2 py-1" 
+                      [ngClass]="d.ativo ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                  {{ d.ativo ? 'Ativo' : 'Inativo' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-2">
+                  <button (click)="abrirModalEditar(d)" 
+                          class="btn btn-sm btn-light text-primary border-0" 
+                          [disabled]="!d.ativo"
+                          title="Editar" style="background-color: #F1E7F5;">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  
+                  <button (click)="alternarStatus(d)" 
+                          class="btn btn-sm border-0" 
+                          [title]="d.ativo ? 'Desativar Profissional' : 'Reativar Profissional'"
+                          [ngClass]="d.ativo ? 'btn-light text-warning' : 'btn-light text-secondary'"
+                          [style.background-color]="d.ativo ? '#FFF3CD' : '#E2E3E5'">
+                    <i class="bi" [ngClass]="d.ativo ? 'bi-toggle-on fs-5' : 'bi-toggle-off fs-5'"></i>
+                  </button>
                 </div>
-              </div>
-            </td>
-            <td>PR-12345</td>
-            <td>
-              <div class="fw-semibold">(41) 91111-2222</div>
-              <span class="text-muted" style="font-size: 0.75rem;">carlos.pedroso&#64;vestaplan.com</span>
-            </td>
-            <td>
-              <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Ativo</span>
-            </td>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-light text-primary border-0" title="Editar" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-light text-warning border-0" title="Desativar Profissional" style="background-color: #FFF3CD;"><i class="bi bi-toggle-on fs-5"></i></button>
-              </div>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold me-3 text-white" 
-                     style="width: 38px; height: 38px; background-color: #5A1867;">
-                  AS
-                </div>
-                <div>
-                  <div class="fw-bold text-dark">Dra. Ana Silva</div>
-                  <span class="text-muted" style="font-size: 0.75rem;">Clínica Geral / Endodontia</span>
-                </div>
-              </div>
-            </td>
-            <td>PR-67890</td>
-            <td>
-              <div class="fw-semibold">(41) 93333-4444</div>
-              <span class="text-muted" style="font-size: 0.75rem;">ana.silva&#64;vestaplan.com</span>
-            </td>
-            <td>
-              <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Ativo</span>
-            </td>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-light text-primary border-0" title="Editar" style="background-color: #F1E7F5;"><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-light text-warning border-0" title="Desativar Profissional" style="background-color: #FFF3CD;"><i class="bi bi-toggle-on fs-5"></i></button>
-              </div>
-            </td>
-          </tr>
-
-          <tr class="table-light opacity-50">
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold me-3 bg-secondary text-white" 
-                     style="width: 38px; height: 38px;">
-                  MR
-                </div>
-                <div>
-                  <div class="fw-bold text-secondary text-decoration-line-through">Dr. Marcelo Ramos</div>
-                  <span class="text-muted" style="font-size: 0.75rem;">Odontopediatria</span>
-                </div>
-              </div>
-            </td>
-            <td class="text-muted">PR-54321</td>
-            <td class="text-muted">
-              <div class="fw-semibold">(41) 95555-6666</div>
-              <div>marcelo.ramos&#64;vestaplan.com</div>
-            </td>
-            <td>
-              <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1">Inativo</span>
-            </td>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-light text-muted border-0" title="Editar Desativado" disabled><i class="bi bi-pencil-square"></i></button>
-                <button class="btn btn-sm btn-light text-secondary border-0" title="Reativar Profissional" style="background-color: #E2E3E5;"><i class="bi bi-toggle-off fs-5"></i></button>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
+          }
 
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="exibirModal">
+    <div class="custom-modal-content p-4">
+      
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">
+          {{ modoEdicao ? 'Alterar Cadastro de Dentista' : 'Cadastrar Novo Dentista' }}
+        </h5>
+        <button type="button" class="btn-close small" (click)="fecharModal()"></button>
+      </div>
+      
+      <form [formGroup]="dentistaForm" (ngSubmit)="onSalvar()">
+        
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted">Nome do Profissional</label>
+          <input type="text" formControlName="nome" class="form-control bg-light border-0 py-2 small" placeholder="Ex: Dr. Carlos Pedroso" style="border-radius: 8px;">
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted">CRO (Registro)</label>
+            <input type="text" formControlName="cro" class="form-control bg-light border-0 py-2 small" placeholder="Ex: PR-12345" style="border-radius: 8px;">
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted">Especialidade</label>
+            <input type="text" formControlName="especialidade" class="form-control bg-light border-0 py-2 small" placeholder="Ex: Ortodontia" style="border-radius: 8px;">
+          </div>
+        </div>
+
+        <div class="row g-2 mb-4">
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted">Telefone Corporativo</label>
+            <input type="text" formControlName="telefone" class="form-control bg-light border-0 py-2 small" placeholder="(41) 99999-0000" style="border-radius: 8px;">
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold text-muted">E-mail de Contato</label>
+            <input type="email" formControlName="email" class="form-control bg-light border-0 py-2 small" placeholder="nome&#64;vestaplan.com" style="border-radius: 8px;">
+          </div>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-light small fw-semibold flex-grow-1" (click)="fecharModal()" style="background-color: #ededed; border-radius: 8px; color: #6c757d;">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="dentistaForm.invalid" class="btn fw-bold flex-grow-1 text-white" 
+                  [style.background-color]="modoEdicao ? '#ffc107' : '#5A1867'" style="border-radius: 8px;">
+            {{ modoEdicao ? 'Atualizar' : 'Salvar Registro' }}
+          </button>
+        </div>
+      </form>
+
     </div>
   </div>
 
