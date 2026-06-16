@@ -1,51 +1,52 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4 border-0" style="max-width: 400px; width: 100%;">
+  <div class="card shadow-lg p-4 border-0 bg-white" style="max-width: 400px; width: 100%; border-radius: 16px;">
     
     <div class="text-center mb-4">
-      <h2 class="fw-bold text-primary"><i class="bi bi-shield-plus me-2"></i>VestaPlan</h2>
-      <p class="text-muted small">Insira suas credenciais para acessar o painel</p>
+      <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" 
+           style="width: 80px; height: 80px; background-color: #F1E7F5; color: #5A1867;">
+        <i class="bi bi-fire fs-1"></i>
+      </div>
+      <h2 class="fw-bold text-primary mb-0" style="letter-spacing: 1px;">VESTA<span class="fw-light text-secondary">PLAN</span></h2>
+      <p class="text-muted small mt-1">Gestão Clínica & Estabilidade</p>
     </div>
 
-    <div *ngIf="mensagemErro" class="alert alert-danger py-2 small" role="alert">
+    <div *ngIf="mensagemErro" class="alert alert-danger py-2 small border-0" role="alert" style="border-radius: 8px;">
       <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ mensagemErro }}
     </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       
       <div class="mb-3">
-        <label for="email" class="form-label small fw-semibold text-secondary">E-mail Corporativo</label>
-        <div class="input-group">
-          <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
-          <input 
-            type="email" 
-            id="email" 
-            class="form-control border-start-0 ps-0" 
-            placeholder="nome@vestaplan.com"
-            formControlName="email"
-          >
-        </div>
+        <label for="email" class="form-label small fw-semibold text-muted">E-mail Corporativo</label>
+        <input 
+          type="email" 
+          id="email" 
+          class="form-control form-control-lg bg-light border-0 small" 
+          placeholder="email@vestaplan.com"
+          formControlName="email"
+          style="border-radius: 10px; font-size: 0.95rem;"
+        >
       </div>
 
       <div class="mb-4">
-        <label for="senha" class="form-label small fw-semibold text-secondary">Sua Senha</label>
-        <div class="input-group">
-          <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
-          <input 
-            type="password" 
-            id="senha" 
-            class="form-control border-start-0 ps-0" 
-            placeholder="••••••••"
-            formControlName="senha"
-          >
-        </div>
+        <label for="senha" class="form-label small fw-semibold text-muted">Senha de Acesso</label>
+        <input 
+          type="password" 
+          id="senha" 
+          class="form-control form-control-lg bg-light border-0" 
+          placeholder="••••••••"
+          formControlName="senha"
+          style="border-radius: 10px; font-size: 0.95rem;"
+        >
       </div>
 
       <button 
         type="submit" 
-        class="btn btn-primary w-100 fw-bold py-2 shadow-sm" 
+        class="btn btn-primary btn-lg w-100 fw-bold py-2 shadow-sm border-0" 
         [disabled]="loginForm.invalid"
+        style="border-radius: 10px; background-color: #5A1867; transition: all 0.3s;"
       >
-        Entrar <i class="bi bi-arrow-right-short ms-1"></i>
+        Entrar
       </button>
 
     </form>
