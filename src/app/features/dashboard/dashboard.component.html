@@ -1,1 +1,131 @@
-<p>dashboard works!</p>
+<div class="container-fluid p-0 animate__animated animate__fadeIn">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold text-dark mb-1">Painel Geral de Consultas</h3>
+      <p class="text-muted small mb-0">Visão integrada de agendamentos por pacientes e profissionais da clínica.</p>
+    </div>
+    <div>
+      <span class="text-muted small fw-medium">Hoje, {{ today | date:'dd/MM/yyyy' }}</span>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+      <div class="card border-0 shadow-sm p-3 bg-white" style="border-radius: 12px;">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted small fw-semibold">Total de Consultas Agendadas (Hoje)</span>
+            <h3 class="fw-bold text-dark mt-1 mb-0">12</h3>
+          </div>
+          <div class="rounded-3 p-3 bg-light text-primary fs-3" style="color: #5A1867 !important;">
+            <i class="bi bi-calendar3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <div class="card border-0 shadow-sm p-3 bg-white" style="border-radius: 12px;">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-muted small fw-semibold">Aguardando Confirmação</span>
+            <h3 class="fw-bold text-warning mt-1 mb-0">3</h3>
+          </div>
+          <div class="rounded-3 p-3 bg-warning-subtle text-warning fs-3">
+            <i class="bi bi-clock-history"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    
+    <div class="col-12 col-xl-6">
+      <div class="card border-0 shadow-sm p-4 bg-white h-100" style="border-radius: 16px;">
+        <div class="mb-3">
+          <h5 class="fw-bold text-dark mb-1"><i class="bi bi-person me-2 text-primary" style="color: #5A1867 !important;"></i>Fluxo de Pacientes</h5>
+          <p class="text-muted small mb-0">Lista cronológica de pacientes agendados para atendimento.</p>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light text-muted small">
+              <tr>
+                <th class="border-0 py-3">Horário</th>
+                <th class="border-0 py-3">Paciente</th>
+                <th class="border-0 py-3">Especialidade</th>
+                <th class="border-0 py-3">Status</th>
+              </tr>
+            </thead>
+            <tbody class="small">
+              <tr>
+                <td class="fw-bold text-primary">09:00</td>
+                <td>Marcela Tadeu Vieira</td>
+                <td>Ortodontia</td>
+                <td><span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Confirmado</span></td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-primary">10:30</td>
+                <td>Carlos Henrique Dias</td>
+                <td>Clínica Geral</td>
+                <td><span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Confirmado</span></td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-primary">14:00</td>
+                <td>Amanda Souza</td>
+                <td>Odontopediatria</td>
+                <td><span class="badge bg-warning-subtle text-warning rounded-pill px-2 py-1">Pendente</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-6">
+      <div class="card border-0 shadow-sm p-4 bg-white h-100" style="border-radius: 16px;">
+        <div class="mb-3">
+          <h5 class="fw-bold text-dark mb-1"><i class="bi bi-heart-pulse me-2 text-success" style="color: #76EAD7 !important;"></i>Agenda dos Profissionais</h5>
+          <p class="text-muted small mb-0">Distribuição de consultas por dentista alocado no dia.</p>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light text-muted small">
+              <tr>
+                <th class="border-0 py-3">Profissional</th>
+                <th class="border-0 py-3">Próximo Horário</th>
+                <th class="border-0 py-3">Sala / Cadeira</th>
+                <th class="border-0 py-3">Status Doc</th>
+              </tr>
+            </thead>
+            <tbody class="small">
+              <tr>
+                <td class="fw-bold text-dark">Dr. Carlos Pedroso</td>
+                <td class="text-primary fw-semibold">09:00</td>
+                <td>Consultório A</td>
+                <td><span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Ativo</span></td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-dark">Dra. Ana Silva</td>
+                <td class="text-primary fw-semibold">10:30</td>
+                <td>Consultório B</td>
+                <td><span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Ativo</span></td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-dark">Dr. Marcelo Ramos</td>
+                <td class="text-muted">Sem consultas</td>
+                <td>Consultório C</td>
+                <td><span class="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1">Disponível</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
