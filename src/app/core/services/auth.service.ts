@@ -14,7 +14,6 @@ export class AuthService {
   login(credenciais: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/login`, credenciais).pipe(
       tap(resposta => {
-        // Se a API retornar o token com sucesso, guardamos no localStorage
         if (resposta && resposta.token) {
           localStorage.setItem('vestaplan_token', resposta.token);
         }

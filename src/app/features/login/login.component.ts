@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,8 @@ export class LoginComponent {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -25,15 +27,21 @@ export class LoginComponent {
     });
   }
 
-  onSubmit(): void {
+onSubmit(): void {
     if (this.loginForm.valid) {
-      const dadosLogin = this.loginForm.value;
-      console.log('Dados preenchidos no formulário:', dadosLogin);
+      this.mensagemErro = ''; 
       
-  
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.mensagemErro = 'Por favor, preencha todos os campos corretamente.';
+      
+      this.authService.login(this.loginForm.value).subscribe({
+        next: (resposta) => {
+          console.log('Login efetuado com sucesso! Token salvo.');
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          console.error(err);
+          this.mensagemErro = 'Credenciais inválidas. Verifique seu e-mail e senha.';
+        }
+      });
     }
   }
 }
