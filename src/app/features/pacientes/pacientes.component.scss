@@ -1,0 +1,26 @@
+.custom-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.custom-modal-content {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px; /* Um pouco mais largo para acomodar os campos lado a lado */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: fadeScale 0.2s ease-out;
+}
+
+@keyframes fadeScale {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
