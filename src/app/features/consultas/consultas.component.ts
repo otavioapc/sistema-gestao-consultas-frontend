@@ -108,18 +108,21 @@ export class ConsultasComponent implements OnInit {
     this.idConsultaSel = null;
   }
 
-  onSalvarAgendamento(): void {
+onSalvarAgendamento(): void {
     if (this.agendamentoForm.valid) {
       const formValue = this.agendamentoForm.value;
 
+      const dataInicioFormatada = formValue.dataInicio.length === 16 ? `${formValue.dataInicio}:00` : formValue.dataInicio;
+      const dataFimFormatada = formValue.dataFim.length === 16 ? `${formValue.dataFim}:00` : formValue.dataFim;
+
       if (this.modoEdicao && this.idConsultaSel !== null) {
-        const payloadUpdate: { idPaciente: number; idDentista: number; idUsuario: number; descricao: string; dataInicio: string; dataFim: string; status: "AGENDADA" | "CANCELADA" | "FINALIZADA" } = {
+        const payloadUpdate: ConsultaUpdateDTO = {
           idPaciente: +formValue.idPaciente,
           idDentista: +formValue.idDentista,
-          idUsuario: +formValue.idUsuario,
+          idUsuario: 0,
           descricao: formValue.descricao,
-          dataInicio: formValue.dataInicio,
-          dataFim: formValue.dataFim,
+          dataInicio: dataInicioFormatada,
+          dataFim: dataFimFormatada,
           status: this.statusEdicaoSel
         };
 
@@ -131,10 +134,10 @@ export class ConsultasComponent implements OnInit {
         const payloadCreate: ConsultaDTO = {
           idPaciente: +formValue.idPaciente,
           idDentista: +formValue.idDentista,
-          idUsuario: +formValue.idUsuario,
+          idUsuario: 0, 
           descricao: formValue.descricao,
-          dataInicio: formValue.dataInicio,
-          dataFim: formValue.dataFim
+          dataInicio: dataInicioFormatada,
+          dataFim: dataFimFormatada
         };
 
         this.consultaService.cadastrar(payloadCreate).subscribe({
