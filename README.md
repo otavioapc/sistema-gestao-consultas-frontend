@@ -1,59 +1,33 @@
-# Vestaplan
+# VestaPlan Web Panel 🎨🦷
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.2.
+Rico em design de interface e componentização, o **VestaPlan** é o painel de controle front-end desenvolvido em **Angular** para consumo da API clínica. A aplicação oferece uma experiência Single Page Application (SPA) fluida, reativa e totalmente integrada com políticas de segurança.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🛠️ Tecnologias e Recursos Front-End
+* **Angular 19+** (Aproveitando componentes `standalone` e a nova sintaxe de fluxo de controle `@for` / `@if`)
+* **TypeScript** (Tipagem forte para contratos de dados e interfaces)
+* **Bootstrap 5 & Bootstrap Icons** (Visual moderno, limpo e responsivo)
+* **Reactive Forms & FormBuilder** (Formulários reativos estruturados com validações assíncronas em tempo real)
+* **RxJS** (Gerenciamento de fluxos de dados assíncronos via Observables)
 
-```bash
-ng serve
-```
+---
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🧠 Recursos e Fluxos de Destaque
 
-## Code scaffolding
+### 1. Interceptador de Segurança HTTP (`auth.interceptor.ts`)
+A aplicação conta com um interceptador global. Sempre que uma requisição HTTP é disparada para o backend, o interceptador captura automaticamente o token armazenado no `localStorage` e o injeta no cabeçalho da requisição (`Authorization: Bearer <token>`), eliminando a necessidade de tratar a segurança manualmente em cada componente.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 🎭 2. Formulários Inteligentes e Máscaras Dinâmicas
+* Validações visuais intuitivas que alertam o usuário antes do envio de payloads incompletos ou incorretos (ex: tamanho mínimo de strings, campos obrigatórios e formatos de e-mail).
+* Utilitários utilitários de tratamento de texto (`TextoUtils`) que formatam dinamicamente strings complexas vindas brutas do banco de dados (ex: formatação de CPFs no padrão `000.000.000-00` em tempo real na listagem).
 
-```bash
-ng generate component component-name
-```
+### 🔄 3. Sincronização Automática de Modais (CRUD)
+Arquitetura reativa baseada em eventos onde a tabela de dados realiza um re-fetch automático (`carregarTodosOsDados()`) imediatamente após o encerramento bem-sucedido de um modal de cadastro ou edição, mantendo o estado da tela sempre atualizado com o banco sem necessidade de recarregar a página (`F5`).
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 📁 Estrutura de Diretórios Essenciais
+* `/src/app/core/services`: Contém os serviços de comunicação HTTP (`AuthService`, `ConsultaService`, `PacienteService`, `DentistaService`, `UsuarioService`).
+* `/src/app/paginas`: Componentes de visualização de tela (`ConsultasComponent`, `UsuariosComponent`, etc.).
+* `/src/app/shared/utils`: Classes utilitárias compartilhadas, como formatadores de Strings.
