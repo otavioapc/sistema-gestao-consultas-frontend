@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PacienteService, Paciente } from '../../core/services/paciente.service'; 
+import { TextoUtils } from '../../shared/utils/texto-utils';
 
 @Component({
   selector: 'app-pacientes',
@@ -107,4 +108,13 @@ export class PacientesComponent implements OnInit {
     if (!nome) return 'PA';
     return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
   }
+
+  formatarCPF(cpf: string): string {
+    return TextoUtils.formatarCPF(cpf);
+  }
+
+  formatarTelefone(tel: string): string {
+    return TextoUtils.formatarTelefone(tel);
+  }
+
 }
