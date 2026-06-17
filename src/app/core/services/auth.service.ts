@@ -12,6 +12,7 @@ export class AuthService {
   constructor(private readonly http: HttpClient) { }
 
   login(credenciais: any): Observable<any> {
+    
     return this.http.post<any>(`${this.API_URL}/login`, credenciais).pipe(
       tap(resposta => {
         if (resposta && resposta.token) {

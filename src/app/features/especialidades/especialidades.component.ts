@@ -16,13 +16,11 @@ export class EspecialidadesComponent implements OnInit {
   edicaoForm: FormGroup;
   idEspecialidadeSel: number | null = null;
   exibirModal: boolean = false;
-  
-  // Lista que agora será preenchida pelos dados vindos do Java
   listaEspecialidades: Especialidade[] = [];
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly especialidadeService: EspecialidadeService // Injeção do serviço HTTP
+    private readonly especialidadeService: EspecialidadeService 
   ) {
     this.cadastroForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]]
@@ -34,10 +32,9 @@ export class EspecialidadesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.carregarEspecialidades(); // Carrega os dados assim que a tela abre
+    this.carregarEspecialidades();
   }
 
-  // Consome o GET /especialidades da sua API
   carregarEspecialidades(): void {
     this.especialidadeService.listar().subscribe({
       next: (dados) => this.listaEspecialidades = dados,
@@ -45,7 +42,6 @@ export class EspecialidadesComponent implements OnInit {
     });
   }
 
-  // Consome o POST /especialidades
   onCadastrar(): void {
     if (this.cadastroForm.valid) {
       const payload = { nome: this.cadastroForm.value.nome };
@@ -53,7 +49,7 @@ export class EspecialidadesComponent implements OnInit {
       this.especialidadeService.cadastrar(payload).subscribe({
         next: () => {
           this.cadastroForm.reset();
-          this.carregarEspecialidades(); // Recarrega a tabela com o dado novo do banco
+          this.carregarEspecialidades();
         },
         error: (err) => console.error('Erro ao cadastrar:', err)
       });
