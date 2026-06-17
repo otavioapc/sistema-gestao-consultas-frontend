@@ -7,7 +7,7 @@ export interface Usuario {
   nome: string;
   cpf: string;
   email: string;
-  perfil: 'ADMIN' | 'DENTISTA'; 
+  perfilUsuario: 'ADMIN' | 'DENTISTA'; 
   ativo: boolean;
   dataCriacao?: string;
   ultimoAcesso?: string;

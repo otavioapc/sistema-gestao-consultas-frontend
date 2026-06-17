@@ -40,13 +40,13 @@
               </td>
               <td class="fw-mono text-secondary">{{ formatarCPF(u.cpf) }}</td>
               <td>{{ u.email }}</td>
-              <td>
-                <span class="badge rounded-pill px-2 py-1"
-                      [ngClass]="u.perfil === 'ADMIN' ? 'bg-danger-subtle text-danger' : 'bg-primary-subtle text-primary'">
-                  <i class="bi" [ngClass]="u.perfil === 'ADMIN' ? 'bi-person-workspace' : 'bi-heart-pulse-fill'"></i> 
-                  {{ u.perfil === 'ADMIN' ? 'Administrador' : 'Dentista' }}
-                </span>
-              </td>
+                  <td>
+                    <span class="badge rounded-pill px-2 py-1"
+                          [ngClass]="u.perfilUsuario === 'ADMIN' ? 'bg-danger-subtle text-danger' : 'bg-primary-subtle text-primary'">
+                      <i class="bi" [ngClass]="u.perfilUsuario === 'ADMIN' ? 'bi-person-workspace' : 'bi-heart-pulse-fill'"></i> 
+                      {{ u.perfilUsuario === 'ADMIN' ? 'Administrador' : 'Dentista' }}
+                    </span>
+                  </td>
               <td class="text-center">
                 <div class="d-flex justify-content-center gap-2">
                   <button (click)="abrirModalEditar(u)" class="btn btn-sm btn-light text-primary border-0" title="Modificar Conta" style="background-color: #F1E7F5;">

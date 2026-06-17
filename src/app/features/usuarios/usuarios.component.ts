@@ -62,7 +62,7 @@ export class UsuariosComponent implements OnInit {
         nome: user.nome,
         cpf: user.cpf,
         email: user.email,
-        perfil: user.perfil,
+        perfil: user.perfilUsuario,
         senha: ''
       });
 
