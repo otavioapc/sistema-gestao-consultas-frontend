@@ -1,56 +1,80 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DentistaService, Dentista, DentistaDTO } from '../../core/services/dentista.service';
+import { EspecialidadeService, Especialidade } from '../../core/services/especialidade.service';
+import { TextoUtils } from '../../shared/utils/texto-utils'; 
 
 @Component({
   selector: 'app-dentistas',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule], 
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './dentistas.component.html',
   styleUrl: './dentistas.component.scss'
 })
-export class DentistasComponent {
+export class DentistasComponent implements OnInit {
 
   dentistaForm: FormGroup;
   exibirModal: boolean = false;
   modoEdicao: boolean = false;
   idDentistaSel: number | null = null;
 
-  listaDentistas = [
-    { id: 1, nome: 'Dr. Carlos Pedroso', cro: 'PR-12345', telefone: '(41) 91111-2222', email: 'carlos.pedroso@vestaplan.com', especialidade: 'Ortodontia / Implantodontia', ativo: true },
-    { id: 2, nome: 'Dra. Ana Silva', cro: 'PR-67890', telefone: '(41) 93333-4444', email: 'ana.silva@vestaplan.com', especialidade: 'Clínica Geral / Endodontia', ativo: true },
-    { id: 3, nome: 'Dr. Marcelo Ramos', cro: 'PR-54321', telefone: '(41) 95555-6666', email: 'marcelo.ramos@vestaplan.com', especialidade: 'Odontopediatria', ativo: false }
-  ];
+  listaDentistas: Dentista[] = [];
+  listaEspecialidades: Especialidade[] = [];
 
-  constructor(private readonly fb: FormBuilder) {
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly dentistaService: DentistaService,
+    private readonly especialidadeService: EspecialidadeService
+  ) {
     this.dentistaForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
-      cro: ['', [Validators.required]],
-      telefone: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      especialidade: ['', [Validators.required]]
+      cpf: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(14)]],
+      cro: ['', [Validators.required]],
+      especialidadesId: [[], [Validators.required]]
+    });
+  }
+
+  ngOnInit(): void {
+    this.carregarDados();
+  }
+
+  carregarDados(): void {
+    this.dentistaService.listar().subscribe({
+      next: (dados) => this.listaDentistas = dados,
+      error: (err) => console.error('Erro ao buscar dentistas:', err)
+    });
+
+    this.especialidadeService.listar().subscribe({
+      next: (dados) => this.listaEspecialidades = dados,
+      error: (err) => console.error('Erro ao buscar especialidades:', err)
     });
   }
 
   abrirModalNovo(): void {
     this.modoEdicao = false;
-    this.dentistaForm.reset();
+    this.idDentistaSel = null;
+    this.dentistaForm.reset({ especialidadesId: [] });
     this.exibirModal = true;
   }
 
-  abrirModalEditar(dentista: any): void {
-    if (!dentista.ativo) return;
+  abrirModalEditar(dentista: Dentista): void {
+    if (dentista.id !== undefined && dentista.ativo) {
+      this.modoEdicao = true;
+      this.idDentistaSel = dentista.id;
 
-    this.modoEdicao = true;
-    this.idDentistaSel = dentista.id;
-    this.dentistaForm.patchValue({
-      nome: dentista.nome,
-      cro: dentista.cro,
-      telefone: dentista.telefone,
-      email: dentista.email,
-      especialidade: dentista.especialidade
-    });
-    this.exibirModal = true;
+      const idsEspecialidades = dentista.especialidades.map(e => e.id as number);
+
+      this.dentistaForm.patchValue({
+        nome: dentista.nome,
+        email: dentista.email,
+        cpf: dentista.cpf,
+        cro: dentista.cro,
+        especialidadesId: idsEspecialidades
+      });
+      this.exibirModal = true;
+    }
   }
 
   fecharModal(): void {
@@ -59,46 +83,42 @@ export class DentistasComponent {
     this.dentistaForm.reset();
   }
 
-  alternarStatus(dentista: any): void {
-    dentista.ativo = !dentista.ativo;
-    console.log(`${dentista.nome} agora está ${dentista.ativo ? 'Ativo' : 'Inativo'}`);
-  }
-
   onSalvar(): void {
     if (this.dentistaForm.valid) {
-      const dadosForm = this.dentistaForm.value;
+      const formValue = this.dentistaForm.value;
+
+      const payload: DentistaDTO = {
+        nome: formValue.nome,
+        email: formValue.email,
+        cpf: formValue.cpf,
+        cro: formValue.cro,
+        especialidadesId: formValue.especialidadesId.map((id: any) => +id)
+      };
 
       if (this.modoEdicao && this.idDentistaSel !== null) {
-        const index = this.listaDentistas.findIndex(d => d.id === this.idDentistaSel);
-        if (index !== -1) {
-          this.listaDentistas[index] = {
-            ...this.listaDentistas[index],
-            nome: dadosForm.nome,
-            cro: dadosForm.cro,
-            telefone: dadosForm.telefone,
-            email: dadosForm.email,
-            especialidade: dadosForm.especialidade
-          };
-        }
+        this.dentistaService.atualizar(this.idDentistaSel, payload).subscribe({
+          next: () => { this.fecharModal(); this.carregarDados(); },
+          error: (err) => console.error('Erro ao atualizar dentista:', err)
+        });
       } else {
-        const novoId = this.listaDentistas.length + 1;
-        this.listaDentistas.push({
-          id: novoId,
-          nome: dadosForm.nome,
-          cro: dadosForm.cro,
-          telefone: dadosForm.telefone,
-          email: dadosForm.email,
-          especialidade: dadosForm.especialidade,
-          ativo: true 
+        this.dentistaService.cadastrar(payload).subscribe({
+          next: () => { this.fecharModal(); this.carregarDados(); },
+          error: (err) => console.error('Erro ao cadastrar dentista:', err)
         });
       }
-
-      this.fecharModal();
     }
   }
 
-  getIniciais(nome: string): string {
-    const limpo = nome.replace('Dr. ', '').replace('Dra. ', '');
-    return limpo.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+  alternarStatus(id: number | undefined): void {
+    if (id !== undefined) {
+      this.dentistaService.alternarStatus(id).subscribe({
+        next: () => this.carregarDados(), 
+        error: (err) => console.error('Erro ao alterar status do profissional:', err)
+      });
+    }
+  }
+
+  formatarCPF(cpf: string): string {
+    return TextoUtils.formatarCPF(cpf);
   }
 }

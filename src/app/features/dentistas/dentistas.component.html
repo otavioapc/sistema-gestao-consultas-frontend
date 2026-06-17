@@ -2,30 +2,12 @@
 
   <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
     <div>
-      <h3 class="fw-bold text-dark mb-1">Corpo Clínico (Dentistas)</h3>
-      <p class="text-muted small mb-0">Gerencie os profissionais de saúde, suas especialidades e status de atuação.</p>
+      <h3 class="fw-bold text-dark mb-1">Corpo Clínico</h3>
+      <p class="text-muted small mb-0">Gerencie o cadastro, especialidades e o status ativo dos dentistas da clínica.</p>
     </div>
     <button (click)="abrirModalNovo()" class="btn btn-primary fw-bold px-4 py-2 border-0 shadow-sm" style="background-color: #5A1867; border-radius: 10px;">
-      <i class="bi bi-heart-pulse-fill me-2"></i> Cadastrar Dentista
+      <i class="bi bi-person-plus-fill me-2"></i> Adicionar Profissional
     </button>
-  </div>
-
-  <div class="card border-0 shadow-sm p-3 mb-4 bg-white" style="border-radius: 12px;">
-    <div class="row g-2 align-items-center">
-      <div class="col-12 col-md-8">
-        <div class="input-group">
-          <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-search small"></i></span>
-          <input type="text" class="form-control bg-light border-0 small" placeholder="Buscar por nome, CRO ou especialidade..." style="font-size: 0.9rem;">
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <select class="form-select bg-light border-0 small text-muted" style="font-size: 0.9rem;">
-          <option value="">Todos os Status</option>
-          <option value="ATIVO">Ativos</option>
-          <option value="INATIVO">Inativos</option>
-        </select>
-      </div>
-    </div>
   </div>
 
   <div class="card border-0 shadow-sm p-4 bg-white" style="border-radius: 16px;">
@@ -34,10 +16,10 @@
         <thead class="table-light text-muted small">
           <tr>
             <th class="border-0 py-3">Profissional</th>
-            <th class="border-0 py-3">CRO (Registro)</th>
-            <th class="border-0 py-3">Contato Corporativo</th>
-            <th class="border-0 py-3">Status</th>
-            <th class="border-0 py-3 text-center" style="width: 140px;">Ações</th>
+            <th class="border-0 py-3">CRO / CPF</th>
+            <th class="border-0 py-3">E-mail corporativo</th>
+            <th class="border-0 py-3">Especialidades Atendidas</th>
+            <th class="border-0 py-3 text-center" style="width: 140px;">Ações / Status</th>
           </tr>
         </thead>
         <tbody class="small">
@@ -45,46 +27,50 @@
           @for (d of listaDentistas; track d.id) {
             <tr [ngClass]="{'table-light opacity-50': !d.ativo}">
               <td>
-                <div class="d-flex align-items-center">
-                  <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold me-3 text-white" 
-                       [style.background-color]="d.ativo ? '#5A1867' : '#6c757d'"
-                       style="width: 38px; height: 38px;">
-                    {{ getIniciais(d.nome) }}
-                  </div>
-                  <div>
-                    <div class="fw-bold" [ngClass]="d.ativo ? 'text-dark' : 'text-secondary text-decoration-line-through'">{{ d.nome }}</div>
-                    <span class="text-muted" style="font-size: 0.75rem;">{{ d.especialidade }}</span>
-                  </div>
+                <div class="fw-bold" [ngClass]="d.ativo ? 'text-dark' : 'text-secondary text-decoration-line-through'">
+                  Dr(a). {{ d.nome }}
                 </div>
-              </td>
-              <td [ngClass]="{'text-muted': !d.ativo}">{{ d.cro }}</td>
-              <td [ngClass]="{'text-muted': !d.ativo}">
-                <div class="fw-semibold">{{ d.telefone }}</div>
-                <span class="text-muted" style="font-size: 0.75rem;">{{ d.email }}</span>
+                <span class="text-muted" style="font-size: 0.75rem;">ID: #DEN00{{ d.id }}</span>
               </td>
               <td>
-                <span class="badge rounded-pill px-2 py-1" 
-                      [ngClass]="d.ativo ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
-                  {{ d.ativo ? 'Ativo' : 'Inativo' }}
-                </span>
+                <div class="fw-semibold text-dark">CRO: {{ d.cro }}</div>
+                <div class="text-muted" style="font-size: 0.8rem;">CPF: {{ formatarCPF(d.cpf) }}</div>
+              </td>
+              <td [ngClass]="{'text-muted': !d.ativo}">{{ d.email }}</td>
+              <td>
+                @for (esp of d.especialidades; track esp.id) {
+                  <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1 me-1 mb-1" style="font-size: 0.7rem;">
+                    {{ esp.nome }}
+                  </span>
+                } @empty {
+                  <span class="text-muted italic small">Nenhuma vinculada</span>
+                }
               </td>
               <td class="text-center">
-                <div class="d-flex justify-content-center gap-2">
+                <div class="d-flex justify-content-center align-items-center gap-3">
                   <button (click)="abrirModalEditar(d)" 
                           class="btn btn-sm btn-light text-primary border-0" 
                           [disabled]="!d.ativo"
-                          title="Editar" style="background-color: #F1E7F5;">
+                          title="Editar Cadastro" style="background-color: #F1E7F5;">
                     <i class="bi bi-pencil-square"></i>
                   </button>
                   
-                  <button (click)="alternarStatus(d)" 
-                          class="btn btn-sm border-0" 
-                          [title]="d.ativo ? 'Desativar Profissional' : 'Reativar Profissional'"
-                          [ngClass]="d.ativo ? 'btn-light text-warning' : 'btn-light text-secondary'"
-                          [style.background-color]="d.ativo ? '#FFF3CD' : '#E2E3E5'">
-                    <i class="bi" [ngClass]="d.ativo ? 'bi-toggle-on fs-5' : 'bi-toggle-off fs-5'"></i>
-                  </button>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" 
+                           type="checkbox" 
+                           role="switch" 
+                           [checked]="d.ativo"
+                           (change)="alternarStatus(d.id)"
+                           title="Ativar/Desativar Profissional"
+                           style="cursor: pointer; width: 2.2em; height: 1.1em;">
+                  </div>
                 </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">
+                Nenhum cirurgião-dentista encontrado no corpo clínico.
               </td>
             </tr>
           }
@@ -99,7 +85,7 @@
       
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="fw-bold text-dark mb-0">
-          {{ modoEdicao ? 'Alterar Cadastro de Dentista' : 'Cadastrar Novo Dentista' }}
+          {{ modoEdicao ? 'Atualizar Dados do Profissional' : 'Cadastrar Novo Dentista' }}
         </h5>
         <button type="button" class="btn-close small" (click)="fecharModal()"></button>
       </div>
@@ -107,29 +93,36 @@
       <form [formGroup]="dentistaForm" (ngSubmit)="onSalvar()">
         
         <div class="mb-3">
-          <label class="form-label small fw-semibold text-muted">Nome do Profissional</label>
+          <label class="form-label small fw-semibold text-muted">Nome Completo</label>
           <input type="text" formControlName="nome" class="form-control bg-light border-0 py-2 small" placeholder="Ex: Dr. Carlos Pedroso" style="border-radius: 8px;">
         </div>
 
         <div class="row g-2 mb-3">
           <div class="col-6">
-            <label class="form-label small fw-semibold text-muted">CRO (Registro)</label>
-            <input type="text" formControlName="cro" class="form-control bg-light border-0 py-2 small" placeholder="Ex: PR-12345" style="border-radius: 8px;">
+            <label class="form-label small fw-semibold text-muted">CPF</label>
+            <input type="text" formControlName="cpf" class="form-control bg-light border-0 py-2 small" placeholder="000.000.000-00" style="border-radius: 8px;">
           </div>
           <div class="col-6">
-            <label class="form-label small fw-semibold text-muted">Especialidade</label>
-            <input type="text" formControlName="especialidade" class="form-control bg-light border-0 py-2 small" placeholder="Ex: Ortodontia" style="border-radius: 8px;">
+            <label class="form-label small fw-semibold text-muted">Inscrição CRO</label>
+            <input type="text" formControlName="cro" class="form-control bg-light border-0 py-2 small" placeholder="Ex: PR-12345" style="border-radius: 8px;">
           </div>
         </div>
 
-        <div class="row g-2 mb-4">
-          <div class="col-6">
-            <label class="form-label small fw-semibold text-muted">Telefone Corporativo</label>
-            <input type="text" formControlName="telefone" class="form-control bg-light border-0 py-2 small" placeholder="(41) 99999-0000" style="border-radius: 8px;">
-          </div>
-          <div class="col-6">
-            <label class="form-label small fw-semibold text-muted">E-mail de Contato</label>
-            <input type="email" formControlName="email" class="form-control bg-light border-0 py-2 small" placeholder="nome&#64;vestaplan.com" style="border-radius: 8px;">
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-muted">E-mail Corporativo</label>
+          <input type="email" formControlName="email" class="form-control bg-light border-0 py-2 small" placeholder="medico&#64;vestaplan.com" style="border-radius: 8px;">
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label small fw-semibold text-muted">Especialidades de Atendimento</label>
+          <p class="text-muted" style="font-size: 0.75rem; margin-bottom: 4px;">Segure a tecla <kbd>Ctrl</kbd> para selecionar mais de uma opção:</p>
+          <select formControlName="especialidadesId" class="form-select bg-light border-0 small text-muted py-2" multiple style="height: 110px; border-radius: 8px;">
+            @for (e of listaEspecialidades; track e.id) {
+              <option [value]="e.id">{{ e.nome }}</option>
+            }
+          </select>
+          <div *ngIf="dentistaForm.get('especialidadesId')?.touched && dentistaForm.get('especialidadesId')?.invalid" class="text-danger small mt-1" style="font-size: 0.7rem;">
+            Selecione pelo menos uma especialidade clínica.
           </div>
         </div>
         
@@ -139,7 +132,7 @@
           </button>
           <button type="submit" [disabled]="dentistaForm.invalid" class="btn fw-bold flex-grow-1 text-white" 
                   [style.background-color]="modoEdicao ? '#ffc107' : '#5A1867'" style="border-radius: 8px;">
-            {{ modoEdicao ? 'Atualizar' : 'Salvar Registro' }}
+            {{ modoEdicao ? 'Atualizar Profissional' : 'Gravar Cadastro' }}
           </button>
         </div>
       </form>
