@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PacienteService, Paciente } from '../../core/services/paciente.service'; 
 
 @Component({
   selector: 'app-pacientes',
@@ -9,45 +10,58 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
   templateUrl: './pacientes.component.html',
   styleUrl: './pacientes.component.scss'
 })
-export class PacientesComponent {
+export class PacientesComponent implements OnInit {
 
   pacienteForm: FormGroup;
   exibirModal: boolean = false;
   modoEdicao: boolean = false;
   idPacienteSel: number | null = null;
+  
+  listaPacientes: Paciente[] = [];
 
-  listaPacientes = [
-    { id: 124, nome: 'Marcela Tadeu Vieira', cpf: '123.456.789-00', telefone: '(11) 98765-4321', email: 'marcela.vieira@email.com', ultimaConsulta: '16/06/2026' },
-    { id: 125, nome: 'Carlos Henrique Dias', cpf: '456.789.123-11', telefone: '(11) 99988-7766', email: 'carlos.dias@email.com', ultimaConsulta: '17/06/2026' },
-    { id: 126, nome: 'Amanda Souza', cpf: '789.123.456-22', telefone: '(11) 91234-5678', email: 'amanda.souza@email.com', ultimaConsulta: '15/06/2026' }
-  ];
-
-  constructor(private readonly fb: FormBuilder) {
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly pacienteService: PacienteService
+  ) {
     this.pacienteForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
-      cpf: ['', [Validators.required, Validators.pattern(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)]],
-      telefone: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
+      cpf: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(14)]],
+      telefone: ['', [Validators.required]]
     });
   }
 
+  ngOnInit(): void {
+    this.carregarPacientes();
+  }
+
+  carregarPacientes(): void {
+    this.pacienteService.listar().subscribe({
+      next: (dados) => this.listaPacientes = dados,
+      error: (err) => console.error('Erro ao buscar pacientes do banco:', err)
+    });
+  }
 
   abrirModalNovo(): void {
     this.modoEdicao = false;
+    this.idPacienteSel = null;
     this.pacienteForm.reset();
     this.exibirModal = true;
   }
 
-  abrirModalEditar(paciente: any): void {
-    this.modoEdicao = true;
-    this.idPacienteSel = paciente.id;
-    this.pacienteForm.patchValue({
-      nome: paciente.nome,
-      cpf: paciente.cpf,
-      telefone: paciente.telefone,
-      email: paciente.email
-    });
-    this.exibirModal = true;
+  abrirModalEditar(paciente: Paciente): void {
+    if (paciente.id !== undefined) {
+      this.modoEdicao = true;
+      this.idPacienteSel = paciente.id;
+      
+      this.pacienteForm.patchValue({
+        nome: paciente.nome,
+        email: paciente.email,
+        cpf: paciente.cpf,
+        telefone: paciente.telefone
+      });
+      this.exibirModal = true;
+    }
   }
 
   fecharModal(): void {
@@ -58,40 +72,39 @@ export class PacientesComponent {
 
   onSalvar(): void {
     if (this.pacienteForm.valid) {
-      const dadosForm = this.pacienteForm.value;
+      const payload = this.pacienteForm.value;
 
       if (this.modoEdicao && this.idPacienteSel !== null) {
-        const index = this.listaPacientes.findIndex(p => p.id === this.idPacienteSel);
-        if (index !== -1) {
-          this.listaPacientes[index] = {
-            ...this.listaPacientes[index],
-            nome: dadosForm.nome,
-            cpf: dadosForm.cpf,
-            telefone: dadosForm.telefone,
-            email: dadosForm.email
-          };
-        }
+        this.pacienteService.atualizar(this.idPacienteSel, payload).subscribe({
+          next: () => {
+            this.fecharModal();
+            this.carregarPacientes();
+          },
+          error: (err) => console.error('Erro ao atualizar paciente:', err)
+        });
       } else {
-        const novoId = Math.floor(Math.random() * 90000) + 10000; // Gera ID fictício de 5 dígitos
-        this.listaPacientes.push({
-          id: novoId,
-          nome: dadosForm.nome,
-          cpf: dadosForm.cpf,
-          telefone: dadosForm.telefone,
-          email: dadosForm.email,
-          ultimaConsulta: 'Sem consultas'
+        this.pacienteService.cadastrar(payload).subscribe({
+          next: () => {
+            this.fecharModal();
+            this.carregarPacientes();
+          },
+          error: (err) => console.error('Erro ao cadastrar paciente:', err)
         });
       }
-
-      this.fecharModal();
     }
   }
 
-  onExcluir(id: number): void {
-    this.listaPacientes = this.listaPacientes.filter(p => p.id !== id);
+  onDeletar(id: number | undefined): void {
+    if (id !== undefined && confirm('Deseja realmente remover permanentemente este paciente do banco de dados?')) {
+      this.pacienteService.deletar(id).subscribe({
+        next: () => this.carregarPacientes(),
+        error: (err) => console.error('Erro ao deletar paciente:', err)
+      });
+    }
   }
 
   getIniciais(nome: string): string {
+    if (!nome) return 'PA';
     return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
   }
 }
