@@ -10,25 +10,6 @@
     </button>
   </div>
 
-  <div class="card border-0 shadow-sm p-3 mb-4 bg-white" style="border-radius: 12px;">
-    <div class="row g-2 align-items-center">
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="input-group">
-          <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-search small"></i></span>
-          <input type="text" class="form-control bg-light border-0 small" placeholder="Buscar por paciente ou dentista..." style="font-size: 0.9rem;">
-        </div>
-      </div>
-      <div class="col-6 col-md-3 col-lg-2">
-        <input type="date" class="form-control bg-light border-0 text-muted small" style="font-size: 0.9rem;">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2">
-        <button class="btn btn-light w-100 fw-semibold text-secondary border-0 small" style="font-size: 0.9rem; background-color: #ededed;">
-          <i class="bi bi-funnel me-1"></i> Filtrar
-        </button>
-      </div>
-    </div>
-  </div>
-
   <div class="card border-0 shadow-sm p-4 bg-white" style="border-radius: 16px;">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
@@ -44,35 +25,35 @@
         <tbody class="small">
           
           @for (c of listaConsultas; track c.id) {
-            <tr [ngClass]="{'table-light opacity-50': c.status === 'Cancelado'}">
+            <tr [ngClass]="{'table-light opacity-50': c.status === 'CANCELADA'}">
               <td>
-                <div class="fw-bold" [ngClass]="c.status === 'Cancelado' ? 'text-muted text-decoration-line-through' : 'text-dark'">
+                <div class="fw-bold" [ngClass]="c.status === 'CANCELADA' ? 'text-muted text-decoration-line-through' : 'text-dark'">
                   {{ formatarData(c.dataInicio) }}
                 </div>
-                <span [ngClass]="c.status === 'Cancelado' ? 'text-muted text-decoration-line-through' : 'text-primary fw-semibold'">
+                <span [ngClass]="c.status === 'CANCELADA' ? 'text-muted text-decoration-line-through' : 'text-primary fw-semibold'">
                   {{ extrairHora(c.dataInicio) }} - {{ extrairHora(c.dataFim) }}
                 </span>
               </td>
               <td>
-                <div class="fw-semibold" [ngClass]="{'text-muted text-decoration-line-through': c.status === 'Cancelado'}">{{ c.pacienteNome }}</div>
-                <span class="text-muted" style="font-size: 0.75rem;">CPF: {{ c.cpf }}</span>
+                <div class="fw-semibold" [ngClass]="{'text-muted text-decoration-line-through': c.status === 'CANCELADA'}">{{ c.paciente.nome }}</div>
+                <span class="text-muted" style="font-size: 0.75rem;">CPF: {{ formatarCPF(c.paciente.cpf) }}</span>
               </td>
               <td>
-                <div class="fw-semibold" [ngClass]="{'text-muted text-decoration-line-through': c.status === 'Cancelado'}">{{ c.dentistaNome }}</div>
+                <div class="fw-semibold" [ngClass]="{'text-muted text-decoration-line-through': c.status === 'CANCELADA'}">Dr(a). {{ c.dentista.nome }}</div>
                 <span class="text-muted" style="font-size: 0.75rem;">{{ c.descricao }}</span>
               </td>
               <td>
                 <span class="badge rounded-pill px-2 py-1" 
                       [ngClass]="{
-                        'bg-success-subtle text-success': c.status === 'Confirmado',
-                        'bg-warning-subtle text-warning': c.status === 'Pendente',
-                        'bg-danger-subtle text-danger': c.status === 'Cancelado'
+                        'bg-success-subtle text-success': c.status === 'AGENDADA',
+                        'bg-danger-subtle text-danger': c.status === 'CANCELADA',
+                        'bg-info-subtle text-info': c.status === 'FINALIZADA'
                       }">
-                  {{ c.status }}
+                  {{ c.status === 'AGENDADA' ? 'Agendada' : c.status === 'CANCELADA' ? 'Cancelada' : 'Finalizada' }}
                 </span>
               </td>
               <td class="text-center">
-                @if (c.status !== 'Cancelado') {
+                @if (c.status === 'AGENDADA') {
                   <div class="d-flex justify-content-center gap-2">
                     <button (click)="abrirEdicao(c)" class="btn btn-sm btn-light text-primary border-0" title="Editar" style="background-color: #F1E7F5;">
                       <i class="bi bi-pencil-square"></i>
@@ -81,9 +62,15 @@
                       <i class="bi bi-calendar-x-fill"></i>
                     </button>
                   </div>
-                } @else {
+                } @else if (c.status === 'CANCELADA') {
                   <span class="text-muted small" style="font-style: italic;">Motivo: {{ c.motivoCancelamento }}</span>
                 }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">
+                Nenhum agendamento de consulta encontrado no sistema.
               </td>
             </tr>
           }
@@ -109,7 +96,7 @@
           <label class="form-label small fw-semibold text-muted">Paciente</label>
           <select formControlName="idPaciente" class="form-select bg-light border-0 small text-muted py-2">
             <option value="">Selecione o paciente...</option>
-            @for (p of pacientesMock; track p.id) {
+            @for (p of listaPacientes; track p.id) {
               <option [value]="p.id">{{ p.nome }}</option>
             }
           </select>
@@ -119,8 +106,8 @@
           <label class="form-label small fw-semibold text-muted">Dentista Responsável</label>
           <select formControlName="idDentista" class="form-select bg-light border-0 small text-muted py-2">
             <option value="">Selecione o profissional...</option>
-            @for (d of dentistasMock; track d.id) {
-              <option [value]="d.id">{{ d.nome }}</option>
+            @for (d of listaDentistas; track d.id) {
+              <option [value]="d.id">Dr(a). {{ d.nome }}</option>
             }
           </select>
         </div>
@@ -166,7 +153,7 @@
       <form [formGroup]="cancelamentoForm" (ngSubmit)="onConfirmarCancelamento()">
         <div class="mb-4">
           <label class="form-label small fw-semibold text-muted">Informe o motivo do cancelamento</label>
-          <textarea formControlName="motivo" class="form-control bg-light border-0 small" rows="3" placeholder="Ex: Paciente solicitou cancelamento por motivos de saúde..." style="border-radius: 8px; resize: none;"></textarea>
+          <textarea formControlName="motivo" class="form-control bg-light border-0 small" rows="3" placeholder="Ex: Paciente solicitou reagendamento por motivos de saúde..." style="border-radius: 8px; resize: none;"></textarea>
         </div>
         
         <div class="d-flex gap-2">
